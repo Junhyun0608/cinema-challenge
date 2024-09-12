@@ -1,0 +1,14 @@
+.container {
+  max-width: 800px;
+  padding: 0 20px;
+  margin: 0 auto;
+}
+.header {
+  padding: 15px 0;
+}
+
+.header a {
+  font-size: 20px;
+  color: red;
+  text-decoration: none;
+}
