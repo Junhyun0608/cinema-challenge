@@ -1,0 +1,16 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 50px;
+}
+
+.reco_movie {
+  display: flex;
+  gap: 5px;
+}
+
+.all_movie {
+  display: grid;
+  grid-template-columns: repeat(4, 2fr);
+  gap: 5px;
+}
