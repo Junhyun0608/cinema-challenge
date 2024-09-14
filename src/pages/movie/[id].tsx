@@ -1,20 +1,24 @@
+import { GetServerSidePropsContext, InferGetServerSidePropsType } from "next";
 import style from "./[id].module.css";
+import fetchOneMovie from "@/lib/fetch-one-movie";
 
-export default function Page() {
-  const mockData = {
-    id: 872585,
-    title: "오펜하이머",
-    releaseDate: "2023-07-19",
-    company: "Syncopy, Universal Pictures, Atlas Entertainment",
-    genres: ["드라마", "역사"],
-    subTitle: "나는 이제 죽음이요, 세상의 파괴자가 되었다.",
-    description:
-      "제2차 세계대전 당시 핵무기 개발을 위해 진행되었던 비밀 프로젝트 ‘맨해튼 프로젝트’를 주도한 미국의 물리학자 ‘로버트 오펜하이머’의 이야기",
-    runtime: 181,
-    posterImgUrl:
-      "https://media.themoviedb.org/t/p/w300_and_h450_face/jpD6z9fgNe7OqsHoDeAWQWoULde.jpg",
+export const getServerSideProps = async (
+  context: GetServerSidePropsContext
+) => {
+  const id = context.params!.id;
+  const movie = await fetchOneMovie(Number(id));
+
+  return {
+    props: {
+      movie,
+    },
   };
+};
 
+export default function Page({
+  movie,
+}: InferGetServerSidePropsType<typeof getServerSideProps>) {
+  if (!movie) return "문제가 발생했습니다. 다시 시도해 주세요";
   const {
     id,
     title,
@@ -25,7 +29,7 @@ export default function Page() {
     description,
     runtime,
     posterImgUrl,
-  } = mockData;
+  } = movie;
 
   return (
     <div className={style.container}>
