@@ -1,12 +1,17 @@
-import { GetServerSidePropsContext, InferGetServerSidePropsType } from "next";
+import { GetStaticPropsContext, InferGetStaticPropsType } from "next";
 import style from "./[id].module.css";
 import fetchOneMovie from "@/lib/fetch-one-movie";
+import { useRouter } from "next/router";
 
-export const getServerSideProps = async (
-  context: GetServerSidePropsContext
-) => {
+export const getStaticProps = async (context: GetStaticPropsContext) => {
   const id = context.params!.id;
   const movie = await fetchOneMovie(Number(id));
+
+  if (!movie) {
+    return {
+      notFound: true,
+    };
+  }
 
   return {
     props: {
@@ -15,12 +20,27 @@ export const getServerSideProps = async (
   };
 };
 
+export const getStaticPaths = () => {
+  return {
+    paths: [
+      { params: { id: "872585" } },
+      { params: { id: "838209" } },
+      { params: { id: "1007127" } },
+    ],
+    fallback: true,
+    // false: path에 설정하지 않은 경로는 모두 404
+    // blocking: ssr방식
+    // true : ssr방식 + 데이터가 없는 폴백 상태의 페이지부터 반환
+  };
+};
+
 export default function Page({
   movie,
-}: InferGetServerSidePropsType<typeof getServerSideProps>) {
+}: InferGetStaticPropsType<typeof getStaticProps>) {
+  const router = useRouter();
+  if (router.isFallback) return "로딩중...";
   if (!movie) return "문제가 발생했습니다. 다시 시도해 주세요";
   const {
-    id,
     title,
     releaseDate,
     company,
