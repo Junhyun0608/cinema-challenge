@@ -2,6 +2,8 @@ import { GetStaticPropsContext, InferGetStaticPropsType } from "next";
 import style from "./[id].module.css";
 import fetchOneMovie from "@/lib/fetch-one-movie";
 import { useRouter } from "next/router";
+import fetchMovies from "@/lib/fetch-movies";
+import { MovieData } from "@/types";
 
 export const getStaticProps = async (context: GetStaticPropsContext) => {
   const id = context.params!.id;
@@ -20,13 +22,12 @@ export const getStaticProps = async (context: GetStaticPropsContext) => {
   };
 };
 
-export const getStaticPaths = () => {
+export const getStaticPaths = async () => {
+  const movies = await fetchMovies();
   return {
-    paths: [
-      { params: { id: "872585" } },
-      { params: { id: "838209" } },
-      { params: { id: "1007127" } },
-    ],
+    paths: movies.map((movie: MovieData) => ({
+      params: { id: movie.id.toString() },
+    })),
     fallback: true,
     // false: path에 설정하지 않은 경로는 모두 404
     // blocking: ssr방식
